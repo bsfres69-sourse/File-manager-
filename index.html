@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SecureShare — приватный обмен</title>
+  <style>
+    :root { --bg: #0f172a; --card: #1e293b; --accent: #22d3ee; --text: #f1f5f9; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body {
+      background: linear-gradient(135deg, var(--bg), #1e293b);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(120deg, #e0e7ff, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .desc { color: #94a3b8; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .input-group { margin-bottom: 1.2rem; }
+    label { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; color: #cbd5e1; }
+    input[type="file"], textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    textarea { min-height: 100px; resize: vertical; }
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(100deg, var(--accent), #06b6d4);      border: none;
+      border-radius: 1rem;
+      color: #0f172a;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    button:hover { transform: translateY(-2px); }
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #0f172a;
+      border-radius: 0.75rem;
+      border: 1px solid #334155;
+      display: none;
+    }
+    .result.show { display: block; }
+    .link-box {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .link {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.6rem 0.8rem;
+      background: #1e293b;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+    .copy-btn {
+      padding: 0.6rem 1rem;
+      background: #334155;
+      border-radius: 0.5rem;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e293b;
+      padding: 0.7rem 1.5rem;
+      border-radius: 2rem;
+      opacity: 0;      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+    /* Страница получателя */
+    #viewer { display: none; text-align: center; }
+    #viewer.show { display: block; }
+    #viewer .content {
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #0f172a;
+      border-radius: 0.75rem;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    #downloadBtn {
+      margin-top: 1rem;
+      background: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <!-- Страница отправителя -->
+  <div class="card" id="sender">
+    <h1>🔐 SecureShare</h1>
+    <p class="desc">Зашифруйте файл или текст в ссылку. Данные не загружаются на сервер — всё в браузере.</p>
+    
+    <div class="input-group">
+      <label>📄 Или загрузите файл</label>
+      <input type="file" id="fileInput" />
+    </div>
+    
+    <div class="input-group">
+      <label>✏️ Или введите текст</label>
+      <textarea id="textInput" placeholder="Ваш секретный текст..."></textarea>
+    </div>
+    
+    <div class="input-group">
+      <label>🔑 Пароль (опционально)</label>
+      <input type="password" id="password" placeholder="Защитите ссылкой паролем" />
+    </div>
+    
+    <button id="generateBtn">✨ Создать защищённую ссылку</button>
+    
+    <div class="result" id="result">
+      <div style="font-size:0.85rem; color:#94a3b8;">Ваша ссылка:</div>      <div class="link-box">
+        <div class="link" id="shortLink"></div>
+        <button class="copy-btn" id="copyBtn">📋</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Страница получателя -->
+  <div class="card" id="viewer">
+    <h1>🔓 Расшифровка</h1>
+    <p class="desc">Введите пароль для просмотра содержимого</p>
+    <div class="input-group">
+      <input type="password" id="viewPassword" placeholder="Пароль" />
+    </div>
+    <button id="decryptBtn">🔍 Расшифровать</button>
+    <div class="content" id="content"></div>
+    <button id="downloadBtn" style="display:none;">⬇️ Скачать файл</button>
+  </div>
+
+  <div class="toast" id="toast">✓ Скопировано</div>
+
+  <script>
+    // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ШИФРОВАНИЯ (Web Crypto API) =====
+    async function deriveKey(password, salt) {
+      const enc = new TextEncoder();
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+      );
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+      );
+    }
+
+    async function encryptData(data, password) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt);
+      const enc = new TextEncoder();
+      const encrypted = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv }, key, typeof data === 'string' ? enc.encode(data) : data
+      );
+      const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+      combined.set(salt, 0);
+      combined.set(iv, salt.length);
+      combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+      return btoa(String.fromCharCode(...combined));
+    }
+
+    async function decryptData(encoded, password) {      const binary = atob(encoded);
+      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+      const salt = bytes.slice(0, 16);
+      const iv = bytes.slice(16, 28);
+      const data = bytes.slice(28);
+      const key = await deriveKey(password, salt);
+      const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+      return decrypted;
+    }
+
+    // ===== ЛОГИКА ОТПРАВИТЕЛЯ =====
+    const sender = document.getElementById('sender');
+    const viewer = document.getElementById('viewer');
+    const fileInput = document.getElementById('fileInput');
+    const textInput = document.getElementById('textInput');
+    const password = document.getElementById('password');
+    const generateBtn = document.getElementById('generateBtn');
+    const result = document.getElementById('result');
+    const shortLink = document.getElementById('shortLink');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+
+    // ===== ЛОГИКА ПОЛУЧАТЕЛЯ =====
+    const viewPassword = document.getElementById('viewPassword');
+    const decryptBtn = document.getElementById('decryptBtn');
+    const content = document.getElementById('content');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    // Проверка: если есть хэш — это страница получателя
+    if (window.location.hash.length > 1) {
+      sender.style.display = 'none';
+      viewer.classList.add('show');
+      document.title = '🔓 SecureShare — Расшифровка';
+    }
+
+    generateBtn.addEventListener('click', async () => {
+      const pwd = password.value || 'public';
+      let data, type = 'text';
+      
+      if (fileInput.files[0]) {
+        const file = fileInput.files[0];
+        const buffer = await file.arrayBuffer();
+        data = await encryptData(buffer, pwd);
+        type = 'file';
+      } else if (textInput.value.trim()) {
+        data = await encryptData(textInput.value.trim(), pwd);
+        type = 'text';
+      } else {
+        alert('Выберите файл или введите текст');
+        return;      }
+      
+      const payload = JSON.stringify({ d: data, t: type });
+      const encoded = btoa(unescape(encodeURIComponent(payload)));
+      const link = window.location.origin + window.location.pathname + '#' + encoded;
+      
+      shortLink.textContent = link;
+      result.classList.add('show');
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(shortLink.textContent);
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    });
+
+    decryptBtn.addEventListener('click', async () => {
+      try {
+        const hash = window.location.hash.substring(1);
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
+        const decrypted = await decryptData(decoded.d, viewPassword.value || 'public');
+        
+        if (decoded.t === 'text') {
+          content.textContent = new TextDecoder().decode(decrypted);
+          downloadBtn.style.display = 'none';
+        } else {
+          content.textContent = '📄 Файл расшифрован';
+          downloadBtn.style.display = 'inline-block';
+          downloadBtn.onclick = () => {
+            const blob = new Blob([decrypted]);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'downloaded_file';
+            a.click();
+            URL.revokeObjectURL(url);
+          };
+        }
+      } catch (e) {
+        content.textContent = '❌ Неверный пароль или повреждённые данные';
+        downloadBtn.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
