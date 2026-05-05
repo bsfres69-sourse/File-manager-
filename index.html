@@ -2,851 +2,461 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>✨ SecureShare — приватный обмен</title>
   <style>
     :root {
-      --bg-dark: #0a0e17;
-      --bg-card: rgba(23, 31, 50, 0.85);
-      --bg-glass: rgba(30, 41, 59, 0.7);
-      --accent: #22d3ee;
-      --accent-glow: rgba(34, 211, 238, 0.4);
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --text: #f1f5f9;
-      --text-dim: #94a3b8;
-      --border: rgba(148, 163, 184, 0.2);
-      --shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.6);
-      --radius: 1.25rem;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --bg: #0a0e17; --card: rgba(23, 31, 50, 0.9); --accent: #22d3ee;
+      --accent-glow: rgba(34, 211, 238, 0.4); --text: #f1f5f9; --text-dim: #94a3b8;
+      --border: rgba(148, 163, 184, 0.25); --success: #22c55e; --error: #ef4444;
+      --radius: 1.25rem; --shadow: 0 20px 60px -15px rgba(0,0,0,0.5);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
     body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: 
-        radial-gradient(ellipse at top, rgba(34, 211, 238, 0.15), transparent 50%),
-        radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.12), transparent 50%),
-        var(--bg-dark);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      line-height: 1.5;
-      overflow-x: hidden;
+      background: radial-gradient(ellipse at top, rgba(34,211,238,0.12), transparent 50%), var(--bg);
+      color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;
     }
-
-    /* Анимированный фон */
-    .bg-animation {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: -1;
-      overflow: hidden;
-    }
-    .bg-animation::before {      content: '';
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, var(--accent-glow), transparent 60%);
-      top: -200px; right: -200px;
-      border-radius: 50%;
-      animation: float 18s ease-in-out infinite;
-      opacity: 0.5;
-    }
-    .bg-animation::after {
-      content: '';
-      position: absolute;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.25), transparent 60%);
-      bottom: -100px; left: -100px;
-      border-radius: 50%;
-      animation: float 22s ease-in-out infinite reverse;
-      opacity: 0.4;
-    }
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(30px, -20px) scale(1.05); }
-      66% { transform: translate(-20px, 15px) scale(0.95); }
-    }
-
-    /* Карточка */
     .card {
-      background: var(--bg-card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      max-width: 540px;
-      width: 100%;
-      box-shadow: var(--shadow);
-      animation: cardEnter 0.5s ease-out;
-      position: relative;
-      overflow: hidden;
+      background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.8rem; max-width: 520px; width: 100%;
+      box-shadow: var(--shadow); animation: slideIn 0.4s ease;
     }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), #8b5cf6, var(--accent));
-      opacity: 0.8;
-    }
-    @keyframes cardEnter {
-      from { opacity: 0; transform: translateY(20px) scale(0.98); }      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    /* Заголовки */
+    @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    
     h1 {
-      font-size: 1.9rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-      background: linear-gradient(135deg, #e0e7ff, var(--accent), #a78bfa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-size: 1.8rem; margin-bottom: 0.3rem;
+      background: linear-gradient(135deg, #e0e7ff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .subtitle {
-      color: var(--text-dim);
-      font-size: 0.95rem;
-      margin-bottom: 1.8rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
+    .subtitle { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    
+    .input-group { margin-bottom: 1.2rem; }
+    label { display: block; margin-bottom: 0.45rem; font-size: 0.9rem; color: var(--text-dim); font-weight: 500; }
+    input[type="file"], input[type="text"], input[type="password"], textarea {
+      width: 100%; padding: 0.85rem 1rem; border-radius: 0.875rem; border: 1px solid var(--border);
+      background: rgba(30, 41, 59, 0.7); color: var(--text); font-size: 1rem; outline: none; transition: 0.2s;
     }
-
-    /* Поля ввода */
-    .input-group {
-      margin-bottom: 1.3rem;
-      position: relative;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    input[type="file"],
-    input[type="text"],
-    input[type="password"],
-    textarea {
-      width: 100%;
-      padding: 0.9rem 1.1rem;
-      border-radius: 0.875rem;
-      border: 1px solid var(--border);
-      background: var(--bg-glass);
-      color: var(--text);
-      font-size: 1rem;      transition: var(--transition);
-      outline: none;
-    }
-    input:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.15);
-      transform: translateY(-1px);
-    }
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-      font-family: inherit;
-    }
-    input[type="file"] {
-      padding: 0.7rem 1rem;
-      cursor: pointer;
-    }
-    input[type="file"]::file-selector-button {
-      background: linear-gradient(100deg, var(--accent), #06b6d4);
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      color: #0a0e17;
-      font-weight: 600;
-      margin-right: 0.8rem;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    input[type="file"]::file-selector-button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px -5px var(--accent-glow);
-    }
-
-    /* Кнопки */
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,0.2); }
+    textarea { min-height: 100px; resize: vertical; }
+    
     .btn {
-      width: 100%;
-      padding: 0.95rem 1.2rem;
-      background: linear-gradient(100deg, var(--accent), #06b6d4);
-      border: none;
-      border-radius: 1rem;
-      color: #0a0e17;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      position: relative;      overflow: hidden;
+      width: 100%; padding: 0.95rem; background: linear-gradient(100deg, var(--accent), #06b6d4);
+      border: none; border-radius: 1rem; color: #0a0e17; font-weight: 600; font-size: 1rem;
+      cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     }
-    .btn::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
-    .btn:hover::before { left: 100%; }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px -8px var(--accent-glow);
-    }
-    .btn:active { transform: translateY(0); }
-    .btn.secondary {
-      background: var(--bg-glass);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn.secondary:hover {
-      background: rgba(56, 70, 96, 0.8);
-      border-color: var(--accent);
-    }
-    .btn.success {
-      background: linear-gradient(100deg, var(--success), #16a34a);
-    }
-    .btn.success:hover {
-      box-shadow: 0 12px 30px -8px rgba(34, 197, 94, 0.4);
-    }
-
-    /* Результат */
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--accent-glow); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn.secondary { background: rgba(56,70,96,0.8); color: var(--text); border: 1px solid var(--border); }
+    .btn.success { background: linear-gradient(100deg, var(--success), #16a34a); }
+        /* Результат — теперь ОЧЕНЬ заметный */
     .result {
-      margin-top: 1.5rem;
-      padding: 1.1rem;
-      background: var(--bg-glass);
-      border-radius: 0.875rem;
-      border: 1px solid var(--border);
-      display: none;
-      animation: slideUp 0.4s ease-out;
+      margin-top: 1.4rem; padding: 1.2rem; background: rgba(30, 41, 59, 0.8);
+      border-radius: 0.875rem; border: 2px solid var(--accent); display: none; animation: popIn 0.3s ease;
     }
     .result.show { display: block; }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .result-label {
-      font-size: 0.85rem;
-      color: var(--text-dim);      margin-bottom: 0.6rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-    .link-box {
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-      flex-wrap: wrap;
+    @keyframes popIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    
+    .result-label { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .link-wrapper {
+      display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap;
     }
     .link {
-      flex: 1;
-      min-width: 200px;
-      padding: 0.7rem 0.9rem;
-      background: #0f172a;
-      border-radius: 0.625rem;
-      font-family: 'SF Mono', 'Fira Code', monospace;
-      font-size: 0.88rem;
-      word-break: break-all;
-      color: var(--accent);
-      border: 1px solid var(--border);
+      flex: 1; min-width: 200px; padding: 0.8rem 1rem; background: #0f172a; border-radius: 0.625rem;
+      font-family: monospace; font-size: 0.9rem; word-break: break-all; color: var(--accent);
+      border: 1px solid var(--border); display: flex; align-items: center;
     }
     .copy-btn {
-      padding: 0.7rem 1rem;
-      background: var(--bg-glass);
-      border: 1px solid var(--border);
-      border-radius: 0.625rem;
-      color: var(--text);
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 0 1.2rem; background: var(--accent); border: none; border-radius: 0.625rem;
+      color: #0a0e17; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap;
     }
-    .copy-btn:hover {
-      background: rgba(56, 70, 96, 0.9);
-      border-color: var(--accent);
-      transform: translateY(-1px);
-    }
-
+    .copy-btn:hover { background: #67e8f9; }
+    
     /* Оверлей загрузки */
     .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(10, 14, 23, 0.97);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      display: flex;      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s, visibility 0.3s;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10,14,23,0.98); backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; visibility: hidden; transition: 0.25s;
     }
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
+    .overlay.active { opacity: 1; visibility: visible; }
     .spinner {
-      width: 72px;
-      height: 72px;
-      border: 4px solid rgba(34, 211, 238, 0.15);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-    .spinner::after {
-      content: '';
-      position: absolute;
-      top: 4px; left: 4px; right: 4px; bottom: 4px;
-      border: 3px solid transparent;
-      border-bottom-color: #8b5cf6;
-      border-radius: 50%;
-      animation: spin 1.5s linear infinite reverse;
+      width: 64px; height: 64px; border: 4px solid rgba(34,211,238,0.2);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1.3rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .timer {
-      font-size: 3.2rem;
-      font-weight: 800;
-      font-family: 'SF Mono', monospace;
-      background: linear-gradient(135deg, var(--accent), #8b5cf6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin: 0.3rem 0 0.8rem;
-      animation: pulse 1s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.9; }
-    }
-
-    .status {
-      font-size: 1.05rem;      color: var(--text-dim);
-      text-align: center;
-      max-width: 85%;
-      margin-bottom: 0.5rem;
-    }
-    .status-step {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.3rem;
-      font-size: 0.9rem;
-      color: var(--accent);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .status-step.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .progress-bar {
-      width: 200px;
-      height: 4px;
-      background: rgba(148, 163, 184, 0.2);
-      border-radius: 2px;
-      margin-top: 1.2rem;
-      overflow: hidden;
-      position: relative;
-    }
-    .progress-fill {
-      position: absolute;
-      top: 0; left: 0;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--accent), #8b5cf6);
-      border-radius: 2px;
-      transition: width 0.1s linear;
-      animation: progressGlow 2s ease-in-out infinite;
-    }
-    @keyframes progressGlow {
-      0%, 100% { box-shadow: 0 0 8px var(--accent-glow); }
-      50% { box-shadow: 0 0 20px var(--accent-glow); }
-    }
-
-    /* Страница получателя */
+    .timer { font-size: 2.8rem; font-weight: 800; font-family: monospace; color: var(--accent); margin: 0.2rem 0 0.6rem; }
+    .status { color: var(--text-dim); font-size: 1rem; text-align: center; }
+    
+    /* Viewer */
     #viewer { display: none; }
-    #viewer.show { display: block; animation: cardEnter 0.5s ease-out; }
+    #viewer.show { display: block; animation: slideIn 0.4s ease; }
     .content-box {
-      margin: 1.4rem 0;
-      padding: 1.3rem;
-      background: var(--bg-glass);
-      border-radius: 0.875rem;
-      border: 1px solid var(--border);
-      min-height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      transition: var(--transition);
+      margin: 1.3rem 0; padding: 1.2rem; background: rgba(30,41,59,0.7);
+      border-radius: 0.875rem; border: 1px solid var(--border); min-height: 100px;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.5;
     }
-    .content-box.text-content {
-      justify-content: flex-start;
-      text-align: left;
-    }
-    .content-box.loading {
-      color: var(--text-dim);
-      font-style: italic;
-    }
-
-    /* Тост */
+    .content-box.text { justify-content: flex-start; text-align: left; }
+        /* Toast */
     .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      padding: 0.8rem 1.6rem;
-      border-radius: 2rem;
-      color: var(--text);
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      visibility: hidden;
-      transition: var(--transition);
-      z-index: 2000;
-      pointer-events: none;
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--card); border: 1px solid var(--border); padding: 0.8rem 1.4rem;
+      border-radius: 2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem;
+      box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: 0.25s; z-index: 2000;
     }
-    .toast.show {
-      opacity: 1;      visibility: visible;
-      transform: translateX(-50%) translateY(0);
-    }
+    .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     .toast.success { border-color: var(--success); }
-    .toast.error { border-color: #ef4444; }
-
-    /* Анимация галочки */
-    .check-icon {
-      width: 20px; height: 20px;
-      border: 2px solid var(--success);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: var(--transition);
+    .toast.error { border-color: var(--error); }
+    
+    @media (max-width: 500px) {
+      .card { padding: 1.4rem; }
+      .link-wrapper { flex-direction: column; }
+      .copy-btn { width: 100%; padding: 0.8rem; }
+      .timer { font-size: 2.3rem; }
     }
-    .check-icon.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .check-icon::after {
-      content: '✓';
-      color: var(--success);
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    /* Адаптив */
-    @media (max-width: 520px) {
-      .card { padding: 1.6rem 1.4rem; }
-      h1 { font-size: 1.6rem; }
-      .timer { font-size: 2.6rem; }
-      .link-box { flex-direction: column; }
-      .copy-btn { width: 100%; }
-      .progress-bar { width: 160px; }
-    }
-
-    /* Скрытие элементов */
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="bg-animation"></div>
 
-  <!-- Страница отправителя -->
-  <div class="card" id="sender">
-    <h1>✨ SecureShare</h1>
-    <p class="subtitle">Зашифруйте файл или текст в ссылку. Всё происходит в вашем браузере — без серверов и логов.</p>    
-    <div class="input-group">
-      <label>📁 Загрузить файл</label>
-      <input type="file" id="fileInput" accept="*/*" />
-    </div>
-    
-    <div class="input-group">
-      <label>✏️ Или введите текст</label>
-      <textarea id="textInput" placeholder="Ваш секретный текст..."></textarea>
-    </div>
-    
-    <div class="input-group">
-      <label>🔐 Пароль (опционально)</label>
-      <input type="password" id="password" placeholder="Оставьте пустым для публичного доступа" />
-    </div>
-    
-    <button class="btn" id="generateBtn">
-      <span>✨ Создать защищённую ссылку</span>
-    </button>
-    
-    <div class="result" id="result">
-      <div class="result-label">🔗 Ваша ссылка готова:</div>
-      <div class="link-box">
-        <div class="link" id="shortLink"></div>
-        <button class="copy-btn" id="copyBtn" title="Копировать">📋</button>
-      </div>
-    </div>
+<!-- Страница отправителя -->
+<div class="card" id="sender">
+  <h1>✨ SecureShare</h1>
+  <p class="subtitle">Зашифруйте файл или текст в ссылку. Всё в браузере — без серверов.</p>
+  
+  <div class="input-group">
+    <label>📁 Файл</label>
+    <input type="file" id="fileInput" />
   </div>
-
-  <!-- Страница получателя -->
-  <div class="card" id="viewer">
-    <h1>🔓 Расшифровка</h1>
-    <p class="subtitle" id="viewerSubtitle">Введите пароль для просмотра содержимого</p>
-    
-    <div class="input-group" id="passwordGroup">
-      <input type="password" id="viewPassword" placeholder="Пароль от ссылки" />
-    </div>
-    
-    <button class="btn" id="decryptBtn">🔍 Расшифровать</button>
-    
-    <div class="content-box loading" id="content">
-      Ожидание расшифровки...
-    </div>
-    
-    <button class="btn success hidden" id="downloadBtn">
-      ⬇️ Скачать файл
-    </button>
+  
+  <div class="input-group">
+    <label>✏️ Или текст</label>
+    <textarea id="textInput" placeholder="Ваш секрет..."></textarea>
   </div>
-
-  <!-- Оверлей загрузки -->  <div class="overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="timer" id="timerDisplay">3</div>
-    <div class="status" id="statusText">Проверка безопасности...</div>
-    <div class="status-step" id="step1">✓ Проверка целостности данных</div>
-    <div class="status-step" id="step2">✓ Верификация источника</div>
-    <div class="status-step" id="step3">✓ Подготовка к расшифровке</div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
+  
+  <div class="input-group">
+    <label>🔐 Пароль (необязательно)</label>
+    <input type="password" id="password" placeholder="Оставьте пустым для публичной ссылки" />
   </div>
-
-  <!-- Тост уведомления -->
-  <div class="toast" id="toast">
-    <div class="check-icon" id="toastIcon"></div>
-    <span id="toastMsg">Готово!</span>
+  
+  <button class="btn" id="generateBtn">✨ Создать ссылку</button>
+  
+  <!-- Результат: теперь с яркой рамкой и крупной кнопкой -->
+  <div class="result" id="result">
+    <div class="result-label">🔗 Готово! Скопируйте ссылку:</div>
+    <div class="link-wrapper">
+      <div class="link" id="shortLink"></div>
+      <button class="copy-btn" id="copyBtn">📋 Копировать</button>    </div>
   </div>
+</div>
 
-  <script>
-    // ===== Web Crypto API: Шифрование/Расшифрование =====
-    async function deriveKey(password, salt) {
-      const enc = new TextEncoder();
-      const keyMaterial = await crypto.subtle.importKey(
-        'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
-      );
-      return crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
-        keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
-      );
-    }
+<!-- Страница получателя -->
+<div class="card" id="viewer">
+  <h1>🔓 Расшифровка</h1>
+  <p class="subtitle" id="viewerSubtitle">Введите пароль</p>
+  <div class="input-group" id="passwordGroup">
+    <input type="password" id="viewPassword" placeholder="Пароль" />
+  </div>
+  <button class="btn" id="decryptBtn">🔍 Расшифровать</button>
+  <div class="content-box" id="content">Ожидание...</div>
+  <button class="btn success hidden" id="downloadBtn">⬇️ Скачать файл</button>
+</div>
 
-    async function encryptData(data, password) {
-      const salt = crypto.getRandomValues(new Uint8Array(16));
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const key = await deriveKey(password, salt);
-      const enc = new TextEncoder();
-      const encrypted = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv }, key, typeof data === 'string' ? enc.encode(data) : data
-      );
-      const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-      combined.set(salt, 0);
-      combined.set(iv, salt.length);
-      combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-      return btoa(String.fromCharCode(...combined));
-    }
+<!-- Оверлей загрузки -->
+<div class="overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="timer" id="timerDisplay">3</div>
+  <div class="status" id="statusText">Проверка безопасности...</div>
+</div>
 
-    async function decryptData(encoded, password) {
-      const binary = atob(encoded);
-      const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-      const salt = bytes.slice(0, 16);      const iv = bytes.slice(16, 28);
-      const data = bytes.slice(28);
-      const key = await deriveKey(password, salt);
-      return await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
-    }
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toastMsg">✓ Готово</span></div>
 
-    // ===== UI Элементы =====
-    const sender = document.getElementById('sender');
-    const viewer = document.getElementById('viewer');
-    const fileInput = document.getElementById('fileInput');
-    const textInput = document.getElementById('textInput');
-    const password = document.getElementById('password');
-    const generateBtn = document.getElementById('generateBtn');
-    const result = document.getElementById('result');
-    const shortLink = document.getElementById('shortLink');
-    const copyBtn = document.getElementById('copyBtn');
+<script>
+  // ===== Простое и надёжное шифрование =====
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+      keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  }
+
+  async function encryptData(data, password) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveKey(password, salt);
+    const enc = new TextEncoder();
+    const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, typeof data === 'string' ? enc.encode(data) : data);
     
-    const viewPassword = document.getElementById('viewPassword');
-    const passwordGroup = document.getElementById('passwordGroup');
-    const viewerSubtitle = document.getElementById('viewerSubtitle');
-    const decryptBtn = document.getElementById('decryptBtn');
-    const content = document.getElementById('content');
-    const downloadBtn = document.getElementById('downloadBtn');
-    
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const timerDisplay = document.getElementById('timerDisplay');
-    const statusText = document.getElementById('statusText');
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    const progressFill = document.getElementById('progressFill');
-    
-    const toast = document.getElementById('toast');
-    const toastMsg = document.getElementById('toastMsg');
-    const toastIcon = document.getElementById('toastIcon');
+    // Надёжное кодирование в base64
+    const bytes = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+    bytes.set(salt, 0); bytes.set(iv, salt.length); bytes.set(new Uint8Array(encrypted), salt.length + iv.length);
+    return btoa(String.fromCharCode(...bytes));
+  }
+  async function decryptData(encoded, password) {
+    const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+    const salt = bytes.slice(0, 16), iv = bytes.slice(16, 28), data = bytes.slice(28);
+    const key = await deriveKey(password, salt);
+    return await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+  }
 
-    // ===== Проверка хэша: если есть — это страница получателя =====
-    if (window.location.hash.length > 1) {
-      sender.style.display = 'none';
-      viewer.classList.add('show');
-      document.title = '🔓 SecureShare — Расшифровка';
-      
-      // Автоматически запустить проверку, если пароль не требуется
+  // ===== UI элементы =====
+  const sender = document.getElementById('sender');
+  const viewer = document.getElementById('viewer');
+  const fileInput = document.getElementById('fileInput');
+  const textInput = document.getElementById('textInput');
+  const password = document.getElementById('password');
+  const generateBtn = document.getElementById('generateBtn');
+  const result = document.getElementById('result');
+  const shortLink = document.getElementById('shortLink');
+  const copyBtn = document.getElementById('copyBtn');
+  const viewPassword = document.getElementById('viewPassword');
+  const passwordGroup = document.getElementById('passwordGroup');
+  const viewerSubtitle = document.getElementById('viewerSubtitle');
+  const decryptBtn = document.getElementById('decryptBtn');
+  const content = document.getElementById('content');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const timerDisplay = document.getElementById('timerDisplay');
+  const statusText = document.getElementById('statusText');
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+
+  // ===== Проверка хэша =====
+  if (window.location.hash.length > 1) {
+    sender.style.display = 'none';
+    viewer.classList.add('show');
+    document.title = '🔓 SecureShare';
+    
+    try {
       const hash = window.location.hash.substring(1);
-      try {
-        const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
-        if (!decoded.p) {
-          // Нет пароля — запускаем анимацию и показываем контент
-          setTimeout(() => startLoadingAnimation(decoded), 300);
-        }      } catch(e) {
-        showError('Неверная ссылка');
-      }
-    }
-
-    // ===== Генерация ссылки =====
-    generateBtn.addEventListener('click', async () => {
-      const pwd = password.value.trim() || 'public';
-      let data, type = 'text', filename = '';
+      const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
       
-      if (fileInput.files[0]) {
-        const file = fileInput.files[0];
-        filename = file.name;
+      if (!decoded.p) {
+        // Нет пароля — сразу запускаем анимацию
+        setTimeout(() => startLoading(decoded), 200);
+      }
+    } catch(e) {
+      showError('Ссылка повреждена');
+    }
+  }
+
+  // ===== Генерация ссылки =====
+  generateBtn.addEventListener('click', async () => {    const pwd = (password.value.trim() || 'public');
+    let data, type = 'text', filename = '';
+    
+    // Валидация
+    if (fileInput.files[0]) {
+      const file = fileInput.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('Файл слишком большой (макс. 5 МБ)', 'error');
+        return;
+      }
+      filename = file.name;
+      try {
         const buffer = await file.arrayBuffer();
         data = await encryptData(buffer, pwd);
         type = 'file';
-      } else if (textInput.value.trim()) {
-        data = await encryptData(textInput.value.trim(), pwd);
-      } else {
-        showToast('Выберите файл или введите текст', 'error');
+      } catch(e) {
+        showToast('Ошибка чтения файла', 'error');
+        console.error(e);
         return;
       }
-      
+    } else if (textInput.value.trim()) {
+      try {
+        data = await encryptData(textInput.value.trim(), pwd);
+      } catch(e) {
+        showToast('Ошибка шифрования', 'error');
+        console.error(e);
+        return;
+      }
+    } else {
+      showToast('Выберите файл или введите текст', 'error');
+      return;
+    }
+    
+    // Блокируем кнопку и показываем загрузку
+    generateBtn.disabled = true;
+    generateBtn.innerHTML = '⏳ Шифрование...';
+    
+    try {
       const payload = JSON.stringify({ d: data, t: type, p: pwd !== 'public', f: filename });
       const encoded = btoa(unescape(encodeURIComponent(payload)));
       const link = window.location.origin + window.location.pathname + '#' + encoded;
       
+      // Показываем результат
       shortLink.textContent = link;
       result.classList.add('show');
-      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      result.scrollIntoView({ behavior: 'smooth', block: 'center' });
       showToast('Ссылка создана!', 'success');
-    });
-
-    // ===== Копирование ссылки =====
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(shortLink.textContent).then(() => {
-        showToast('Ссылка скопирована!', 'success');
-      });
-    });
-
-    // ===== Анимация загрузки (3 секунды) =====
-    function startLoadingAnimation(decoded) {
-      loadingOverlay.classList.add('active');
-      let timeLeft = 3;
-      timerDisplay.textContent = timeLeft;
-      progressFill.style.width = '0%';
       
-      // Сброс шагов
-      [step1, step2, step3].forEach(el => el.classList.remove('show'));
-            const progressInterval = setInterval(() => {
-        const progress = ((3 - timeLeft) / 3) * 100;
-        progressFill.style.width = `${progress}%`;
-      }, 100);
-      
-      const timerInterval = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = timeLeft;
-        
-        // Показываем шаги по таймингу
-        if (timeLeft === 2) step1.classList.add('show');
-        if (timeLeft === 1) step2.classList.add('show');
-        if (timeLeft === 0) {
-          step3.classList.add('show');
-          progressFill.style.width = '100%';
-        }
-      }, 1000);
-      
-      setTimeout(() => {
-        clearInterval(timerInterval);
-        clearInterval(progressInterval);
-        loadingOverlay.classList.remove('active');
-        showContent(decoded);
-      }, 3100);
+    } catch(e) {
+      console.error('Generate error:', e);      showToast('Не удалось создать ссылку', 'error');
+    } finally {
+      generateBtn.disabled = false;
+      generateBtn.innerHTML = '✨ Создать ссылку';
     }
+  });
 
-    // ===== Показ контента после анимации =====
-    async function showContent(decoded) {
-      content.classList.remove('loading');
-      
-      if (decoded.t === 'text') {
-        // Показываем текст
-        if (decoded.p) {
-          // Нужен пароль
-          viewerSubtitle.textContent = 'Введите пароль для просмотра';
-          passwordGroup.classList.remove('hidden');
-          decryptBtn.classList.remove('hidden');
-          content.textContent = '🔐 Введите пароль выше';
-          content.classList.add('text-content');
-          
-          decryptBtn.onclick = async () => {
-            await tryDecrypt(decoded.d, viewPassword.value, decoded.f);
-          };
-        } else {
-          // Без пароля — показываем сразу
-          try {
-            const decrypted = await decryptData(decoded.d, 'public');
-            content.textContent = new TextDecoder().decode(decrypted);
-            content.classList.add('text-content');
-            downloadBtn.classList.add('hidden');            showToast('Контент расшифрован!', 'success');
-          } catch(e) {
-            content.textContent = '❌ Ошибка расшифровки';
-            showToast('Не удалось расшифровать', 'error');
-          }
-        }
-      } else {
-        // Файл
-        viewerSubtitle.textContent = decoded.p ? 'Введите пароль для скачивания' : 'Файл готов к скачиванию';
+  // ===== Копирование =====
+  copyBtn.addEventListener('click', () => {
+    const text = shortLink.textContent;
+    if (!text) return;
+    
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('✓ Скопировано!', 'success');
+      // Визуальный фидбек на кнопке
+      const original = copyBtn.textContent;
+      copyBtn.textContent = '✓';
+      setTimeout(() => copyBtn.textContent = original, 1200);
+    }).catch(() => {
+      // Фолбэк для старых браузеров
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('✓ Скопировано!', 'success');
+    });
+  });
+
+  // ===== Анимация загрузки (3 сек) =====
+  function startLoading(decoded) {
+    loadingOverlay.classList.add('active');
+    let time = 3;
+    timerDisplay.textContent = time;
+    
+    const statuses = [
+      'Проверка целостности...',
+      'Верификация источника...',
+      'Подготовка к расшифровке...'
+    ];
+    
+    const interval = setInterval(() => {
+      time--;
+      timerDisplay.textContent = time;
+      if (time > 0) statusText.textContent = statuses[3 - time];
+    }, 1000);
+    
+    setTimeout(() => {
+      clearInterval(interval);      loadingOverlay.classList.remove('active');
+      showContent(decoded);
+    }, 3100);
+  }
+
+  // ===== Показ контента =====
+  async function showContent(decoded) {
+    content.textContent = '';
+    
+    if (decoded.t === 'text') {
+      if (decoded.p) {
+        // Нужен пароль
+        viewerSubtitle.textContent = 'Введите пароль';
+        passwordGroup.classList.remove('hidden');
+        decryptBtn.classList.remove('hidden');
+        content.textContent = '🔐 Введите пароль выше для просмотра';
         
-        if (decoded.p) {
-          passwordGroup.classList.remove('hidden');
-          decryptBtn.classList.remove('hidden');
-          content.textContent = '🔐 Введите пароль для скачивания файла';
-          
-          decryptBtn.onclick = async () => {
-            await tryDecrypt(decoded.d, viewPassword.value, decoded.f, true);
-          };
-        } else {
-          // Без пароля — сразу кнопка
-          try {
-            const decrypted = await decryptData(decoded.d, 'public');
-            content.textContent = `📄 ${decoded.f || 'Файл'} расшифрован`;
-            downloadBtn.classList.remove('hidden');
-            downloadBtn.onclick = () => {
-              const blob = new Blob([decrypted]);
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = decoded.f || 'downloaded_file';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
-              showToast('Скачивание начато!', 'success');
-            };
-            showToast('Файл готов!', 'success');
-          } catch(e) {
-            content.textContent = '❌ Ошибка расшифровки файла';
-            showToast('Не удалось расшифровать файл', 'error');
-          }
+        decryptBtn.onclick = () => tryDecrypt(decoded.d, viewPassword.value, null, false);
+      } else {
+        // Без пароля
+        try {
+          const decrypted = await decryptData(decoded.d, 'public');
+          content.textContent = new TextDecoder().decode(decrypted);
+          content.classList.add('text');
+          downloadBtn.classList.add('hidden');
+          showToast('Контент расшифрован!', 'success');
+        } catch(e) {
+          content.textContent = '❌ Ошибка расшифровки';
+          showToast('Неверные данные', 'error');
         }
       }
-    }
-
-    // ===== Попытка расшифровки с паролем =====
-    async function tryDecrypt(encodedData, pwd, filename, isFile = false) {
-      try {
-        const decrypted = await decryptData(encodedData, pwd);
-                if (isFile) {
-          content.textContent = `📄 ${filename || 'Файл'} расшифрован`;
+    } else {
+      // Файл
+      const fname = decoded.f || 'файл';
+      if (decoded.p) {
+        viewerSubtitle.textContent = 'Пароль для скачивания';
+        passwordGroup.classList.remove('hidden');
+        decryptBtn.classList.remove('hidden');
+        content.textContent = `🔐 Введите пароль для ${fname}`;
+        decryptBtn.onclick = () => tryDecrypt(decoded.d, viewPassword.value, decoded.f, true);
+      } else {
+        try {
+          const decrypted = await decryptData(decoded.d, 'public');
+          content.textContent = `📄 ${fname} готов`;
           downloadBtn.classList.remove('hidden');
           downloadBtn.onclick = () => {
             const blob = new Blob([decrypted]);
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = filename || 'downloaded_file';
-            document.body.appendChild(a);
-            a.click();
+            a.href = url; a.download = decoded.f || 'file';            document.body.appendChild(a); a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast('Скачивание начато!', 'success');
+            showToast('Скачивание...', 'success');
           };
-        } else {
-          content.textContent = new TextDecoder().decode(decrypted);
-          content.classList.add('text-content');
-          downloadBtn.classList.add('hidden');
+          showToast('Файл готов!', 'success');
+        } catch(e) {
+          content.textContent = '❌ Ошибка файла';
+          showToast('Не удалось расшифровать', 'error');
         }
-        
-        passwordGroup.classList.add('hidden');
-        decryptBtn.classList.add('hidden');
-        showToast('Успешно!', 'success');
-      } catch(e) {
-        content.textContent = '❌ Неверный пароль';
-        content.classList.remove('text-content');
-        showToast('Неверный пароль', 'error');
       }
     }
+  }
 
-    // ===== Уведомления =====
-    function showToast(message, type = 'success') {
-      toastMsg.textContent = message;
-      toast.className = `toast ${type} show`;
-      toastIcon.classList.add('show');
+  // ===== Расшифровка с паролем =====
+  async function tryDecrypt(encoded, pwd, filename, isFile) {
+    decryptBtn.disabled = true;
+    decryptBtn.textContent = '⏳ Проверка...';
+    
+    try {
+      const decrypted = await decryptData(encoded, pwd);
       
-      setTimeout(() => {
-        toast.classList.remove('show');
-        toastIcon.classList.remove('show');
-      }, 2500);
-    }
+      if (isFile) {
+        content.textContent = `📄 ${filename || 'Файл'} расшифрован`;
+        downloadBtn.classList.remove('hidden');
+        downloadBtn.onclick = () => {
+          const blob = new Blob([decrypted]);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = filename || 'file';
+          document.body.appendChild(a); a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        };
+      } else {
+        content.textContent = new TextDecoder().decode(decrypted);
+        content.classList.add('text');
+        downloadBtn.classList.add('hidden');
+      }
+      
+      passwordGroup.classList.add('hidden');
+      decryptBtn.classList.add('hidden');
+      showToast('✓ Успешно!', 'success');
+      
+    } catch(e) {
+      content.textContent = '❌ Неверный пароль';
+      showToast('Пароль не подходит', 'error');
+    } finally {
+      decryptBtn.disabled = false;
+      decryptBtn.textContent = '🔍 Расшифровать';    }
+  }
 
-    function showError(message) {
-      content.textContent = `❌ ${message}`;
-      content.classList.remove('loading', 'text-content');
-      showToast(message, 'error');
-    }
+  // ===== Уведомления =====
+  function showToast(msg, type = 'success') {
+    toastMsg.textContent = msg;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+  
+  function showError(msg) {
+    content.textContent = `❌ ${msg}`;
+    showToast(msg, 'error');
+  }
 
-    // ===== Обработка нажатия Enter в полях пароля =====    viewPassword?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') decryptBtn.click();
-    });
-    password?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') generateBtn.click();
-    });
-
-    // ===== Подсветка активного поля при фокусе =====
-    document.querySelectorAll('input, textarea').forEach(el => {
-      el.addEventListener('focus', function() {
-        this.parentElement?.classList.add('focused');
-      });
-      el.addEventListener('blur', function() {
-        this.parentElement?.classList.remove('focused');
-      });
-    });
-  </script>
+  // ===== Enter в полях =====
+  viewPassword?.addEventListener('keypress', e => { if (e.key === 'Enter') decryptBtn.click(); });
+  password?.addEventListener('keypress', e => { if (e.key === 'Enter') generateBtn.click(); });
+</script>
 </body>
 </html>
