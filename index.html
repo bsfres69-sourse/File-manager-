@@ -2,111 +2,122 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>🔐 SecureShare — приватный обмен</title>
   <style>
     :root {
-      --bg: #0a0e17; --card: rgba(23, 31, 50, 0.92); --accent: #22d3ee;
-      --accent-glow: rgba(34, 211, 238, 0.35); --text: #f1f5f9; --text-dim: #94a3b8;
-      --border: rgba(148, 163, 184, 0.2); --success: #22c55e; --error: #ef4444;
-      --radius: 1.25rem; --shadow: 0 16px 50px -12px rgba(0,0,0,0.6);
+      --bg: #080c14; --card: rgba(18, 24, 38, 0.94); --accent: #22d3ee;
+      --accent-glow: rgba(34, 211, 238, 0.35); --text: #f8fafc; --text-dim: #94a3b8;
+      --border: rgba(148, 163, 184, 0.18); --success: #22c55e; --error: #ef4444;
+      --radius: 1rem; --shadow: 0 12px 40px -8px rgba(0,0,0,0.65);
+      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
     body {
-      background: radial-gradient(ellipse at top, rgba(34,211,238,0.1), transparent 50%), var(--bg);
-      color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;
+      background: radial-gradient(ellipse at top, rgba(34,211,238,0.08), transparent 55%), var(--bg);
+      color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
     }
     .card {
-      background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.8rem; max-width: 540px; width: 100%;
-      box-shadow: var(--shadow); animation: slideIn 0.4s ease; position: relative; overflow: hidden;
+      background: var(--card); backdrop-filter: blur(14px); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.6rem; max-width: 520px; width: 100%;
+      box-shadow: var(--shadow); animation: fadeIn 0.4s ease; position: relative; overflow: hidden;
     }
     .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), #8b5cf6, var(--accent)); opacity: 0.7;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), #8b5cf6, var(--accent)); opacity: 0.6;
     }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
     
     h1 {
-      font-size: 1.7rem; margin-bottom: 0.3rem;
+      font-size: 1.6rem; margin-bottom: 0.25rem; font-weight: 700;
       background: linear-gradient(135deg, #e0e7ff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .subtitle { color: var(--text-dim); margin-bottom: 1.4rem; font-size: 0.95rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .subtitle { color: var(--text-dim); margin-bottom: 1.3rem; font-size: 0.95rem; padding-bottom: 0.9rem; border-bottom: 1px solid var(--border); }
     
-    .input-group { margin-bottom: 1.1rem; }
-    label { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; color: var(--text-dim); font-weight: 500; }
+    .input-group { margin-bottom: 1rem; }
+    label { display: block; margin-bottom: 0.4rem; font-size: 0.88rem; color: var(--text-dim); font-weight: 500; }
     input[type="file"], input[type="text"], input[type="password"], textarea {
-      width: 100%; padding: 0.85rem 1rem; border-radius: 0.875rem; border: 1px solid var(--border);
-      background: rgba(30, 41, 59, 0.6); color: var(--text); font-size: 1rem; outline: none; transition: 0.2s;
+      width: 100%; padding: 0.8rem 1rem; border-radius: 0.75rem; border: 1px solid var(--border);
+      background: rgba(15, 20, 32, 0.7); color: var(--text); font-size: 0.98rem; outline: none; transition: var(--transition);
     }
     input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,0.15); }
-    textarea { min-height: 100px; resize: vertical; }
-    
-    .btn {
-      width: 100%; padding: 0.9rem; background: linear-gradient(100deg, var(--accent), #06b6d4);
-      border: none; border-radius: 0.875rem; color: #0a0e17; font-weight: 600; font-size: 1rem;
-      cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    textarea { min-height: 90px; resize: vertical; }
+    input[type="file"]::file-selector-button {
+      background: var(--accent); color: #080c14; border: none; padding: 0.5rem 1rem;
+      border-radius: 0.5rem; font-weight: 600; margin-right: 0.8rem; cursor: pointer; transition: var(--transition);
     }
-    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 24px -8px var(--accent-glow); }    .btn:disabled { opacity: 0.6; cursor: wait; }
+    input[type="file"]::file-selector-button:hover { filter: brightness(1.1); }
+        .btn {
+      width: 100%; padding: 0.85rem; background: linear-gradient(100deg, var(--accent), #06b6d4);
+      border: none; border-radius: 0.75rem; color: #080c14; font-weight: 600; font-size: 0.98rem;
+      cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1.5px); box-shadow: 0 8px 20px -6px var(--accent-glow); }
+    .btn:disabled { opacity: 0.6; cursor: wait; }
     .btn.success { background: linear-gradient(100deg, var(--success), #16a34a); }
-    .btn.success:hover:not(:disabled) { box-shadow: 0 10px 24px -8px rgba(34,197,94,0.4); }
+    .btn.success:hover:not(:disabled) { box-shadow: 0 8px 20px -6px rgba(34,197,94,0.4); }
     
     .result {
-      margin-top: 1.3rem; padding: 1.1rem; background: rgba(30, 41, 59, 0.8);
-      border-radius: 0.875rem; border: 2px solid var(--accent); display: none; animation: popIn 0.3s ease;
+      margin-top: 1.2rem; padding: 1rem; background: rgba(15, 20, 32, 0.8);
+      border-radius: 0.75rem; border: 2px solid var(--accent); display: none; animation: slideUp 0.3s ease;
     }
     .result.show { display: block; }
-    @keyframes popIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-    .result-label { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
-    .link-wrapper { display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .result-label { font-size: 0.88rem; color: var(--accent); margin-bottom: 0.6rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
+    .link-wrapper { display: flex; gap: 0.5rem; align-items: stretch; flex-wrap: wrap; }
     .link {
-      flex: 1; min-width: 180px; padding: 0.75rem 0.9rem; background: #0f172a; border-radius: 0.625rem;
-      font-family: 'SF Mono', monospace; font-size: 0.88rem; word-break: break-all; color: var(--accent);
+      flex: 1; min-width: 160px; padding: 0.7rem 0.8rem; background: #0f141e; border-radius: 0.6rem;
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; word-break: break-all; color: var(--accent);
       border: 1px solid var(--border); display: flex; align-items: center;
     }
     .copy-btn {
-      padding: 0 1.1rem; background: var(--accent); border: none; border-radius: 0.625rem;
-      color: #0a0e17; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap;
+      padding: 0 1rem; background: var(--accent); border: none; border-radius: 0.6rem;
+      color: #080c14; font-weight: 600; cursor: pointer; transition: var(--transition); white-space: nowrap;
     }
     .copy-btn:hover { background: #67e8f9; }
     
     .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(10,14,23,0.98); backdrop-filter: blur(12px);
+      background: rgba(8, 12, 20, 0.97); backdrop-filter: blur(10px);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      z-index: 1000; opacity: 0; visibility: hidden; transition: 0.25s;
+      z-index: 1000; opacity: 0; visibility: hidden; transition: 0.2s;
     }
     .overlay.active { opacity: 1; visibility: visible; }
     .spinner {
-      width: 60px; height: 60px; border: 4px solid rgba(34,211,238,0.2);
-      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1.2rem;
+      width: 56px; height: 56px; border: 3px solid rgba(34,211,238,0.15);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .timer { font-size: 2.6rem; font-weight: 800; font-family: monospace; color: var(--accent); margin: 0.2rem 0 0.6rem; }
+    .timer { font-size: 2.4rem; font-weight: 800; font-family: monospace; color: var(--accent); margin: 0.15rem 0 0.5rem; }
     .status { color: var(--text-dim); font-size: 0.95rem; text-align: center; }
     
     .content-box {
-      margin: 1.2rem 0; padding: 1.1rem; background: rgba(30,41,59,0.7);
-      border-radius: 0.875rem; border: 1px solid var(--border); min-height: 90px;
+      margin: 1.1rem 0; padding: 1rem; background: rgba(15, 20, 32, 0.8);
+      border-radius: 0.75rem; border: 1px solid var(--border); min-height: 80px;
       display: flex; align-items: center; justify-content: center; text-align: center;
-      white-space: pre-wrap; word-break: break-word; line-height: 1.5; font-size: 1.02rem;
-    }
+      white-space: pre-wrap; word-break: break-word; line-height: 1.5; font-size: 0.98rem;
+      transition: var(--transition);    }
     .content-box.text { justify-content: flex-start; text-align: left; }
+    .content-box.error { border-color: var(--error); color: #fca5a5; }
     
     .toast {
-      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: var(--card); border: 1px solid var(--border); padding: 0.8rem 1.4rem;
-      border-radius: 2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem;      box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: 0.25s; z-index: 2000;
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(15px);
+      background: var(--card); border: 1px solid var(--border); padding: 0.7rem 1.3rem;
+      border-radius: 1.5rem; color: var(--text); font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem;
+      box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: 0.2s; z-index: 2000;
     }
     .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     .toast.success { border-color: var(--success); }
     .toast.error { border-color: var(--error); }
     
     .hidden { display: none !important; }
-    @media (max-width: 500px) {
-      .card { padding: 1.4rem; }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    
+    @media (max-width: 480px) {
+      .card { padding: 1.3rem; }
       .link-wrapper { flex-direction: column; }
-      .copy-btn { width: 100%; padding: 0.8rem; }
+      .copy-btn { width: 100%; padding: 0.75rem; }
+      .timer { font-size: 2rem; }
     }
   </style>
 </head>
@@ -115,9 +126,9 @@
 <!-- СЕНДЕР -->
 <div class="card" id="sender">
   <h1>✨ SecureShare</h1>
-  <p class="subtitle">Зашифруйте файл или текст в ссылку. Всё в браузере — без серверов.</p>
+  <p class="subtitle">Зашифруйте файл или текст в ссылку. Данные остаются только в вашем браузере.</p>
   <div class="input-group">
-    <label>📁 Файл (до 5 МБ)</label>
+    <label>📁 Файл (любой тип)</label>
     <input type="file" id="fileInput" />
   </div>
   <div class="input-group">
@@ -125,7 +136,7 @@
     <textarea id="textInput" placeholder="Ваше сообщение..."></textarea>
   </div>
   <div class="input-group">
-    <label>🔐 Пароль (опционально)</label>
+    <label>🔐 Пароль (необязательно)</label>
     <input type="password" id="password" placeholder="Оставьте пустым для публичной ссылки" />
   </div>
   <button class="btn" id="generateBtn">✨ Создать ссылку</button>
@@ -134,18 +145,18 @@
     <div class="link-wrapper">
       <div class="link" id="shortLink"></div>
       <button class="copy-btn" id="copyBtn">📋 Копировать</button>
-    </div>
-  </div>
+    </div>  </div>
 </div>
 
 <!-- ВИУЕР -->
 <div class="card hidden" id="viewer">
   <h1>🔓 Расшифровка</h1>
   <p class="subtitle" id="viewerSubtitle">Проверка данных...</p>
-  <!-- Скрыто по умолчанию. Появится только если нужен пароль -->
+  <!-- ПОЯВЛЯЕТСЯ ТОЛЬКО ЕСЛИ ССЫЛКА ЗАПАРОЛЕНА -->
   <div class="input-group hidden" id="passwordGroup">
     <input type="password" id="viewPassword" placeholder="Введите пароль" />
-  </div>  <button class="btn hidden" id="decryptBtn">🔍 Расшифровать</button>
+  </div>
+  <button class="btn hidden" id="decryptBtn">🔍 Расшифровать</button>
   <div class="content-box" id="content">⏳ Ожидание...</div>
   <button class="btn success hidden" id="downloadBtn">⬇️ Скачать файл</button>
 </div>
@@ -177,16 +188,36 @@
     const key = await deriveKey(password, salt);
     const enc = new TextEncoder();
     const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, typeof data === 'string' ? enc.encode(data) : data);
+    
     const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
     combined.set(salt, 0); combined.set(iv, salt.length); combined.set(new Uint8Array(encrypted), salt.length + iv.length);
-    return btoa(String.fromCharCode(...combined));
+    return arrayBufferToBase64(combined);
   }
 
-  async function decryptData(encoded, password) {
-    const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
+  async function decryptData(encoded, password) {    const bytes = base64ToArrayBuffer(encoded);
     const salt = bytes.slice(0, 16), iv = bytes.slice(16, 28), data = bytes.slice(28);
     const key = await deriveKey(password, salt);
     return await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+  }
+
+  // Безопасное преобразование для больших файлов (избегает переполнения стека)
+  function arrayBufferToBase64(buffer) {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const chunkSize = 0x8000; // 32KB
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      binary += String.fromCharCode.apply(null, bytes.slice(i, Math.min(i + chunkSize, bytes.length)));
+    }
+    return btoa(binary);
+  }
+
+  function base64ToArrayBuffer(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
   }
 
   // ========== UI ЭЛЕМЕНТЫ ==========
@@ -194,7 +225,8 @@
     sender: document.getElementById('sender'),
     viewer: document.getElementById('viewer'),
     fileInput: document.getElementById('fileInput'),
-    textInput: document.getElementById('textInput'),    password: document.getElementById('password'),
+    textInput: document.getElementById('textInput'),
+    password: document.getElementById('password'),
     generateBtn: document.getElementById('generateBtn'),
     result: document.getElementById('result'),
     shortLink: document.getElementById('shortLink'),
@@ -211,40 +243,42 @@
     toast: document.getElementById('toast'),
     toastMsg: document.getElementById('toastMsg')
   };
-
-  let decryptedFileData = null;
+  let decryptedBlob = null;
+  let decodedPayload = null;
 
   // ========== ИНИЦИАЛИЗАЦИЯ ==========
   document.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash.substring(1);
     if (hash) {
       try {
-        const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
-        if (!decoded.d || !decoded.t) throw new Error('Invalid payload');
+        decodedPayload = JSON.parse(decodeURIComponent(escape(atob(hash))));
+        if (!decodedPayload.d || !decodedPayload.t) throw new Error('Invalid structure');
         
         els.sender.classList.add('hidden');
         els.viewer.classList.remove('hidden');
-        els.viewerSubtitle.textContent = decoded.p ? '🔒 Ссылка защищена паролем' : '🔓 Открываем защищённые данные...';
+        els.viewer.classList.add('fade-in');
+        els.viewerSubtitle.textContent = decodedPayload.p ? '🔒 Ссылка защищена паролем' : '🔓 Открываем данные...';
         
-        // Всегда запускаем 3-сек анимацию
-        runLoadingAnimation(() => afterAnimation(decoded));
+        // Запускаем 3-сек анимацию
+        runLoading(() => handlePayload(decodedPayload));
       } catch (e) {
         showError('⚠️ Ссылка повреждена или недействительна');
       }
     }
   });
 
-  // ========== ГЕНЕРАЦИЯ ССЫЛКИ ==========
+  // ========== ГЕНЕРАЦИЯ ==========
   els.generateBtn.addEventListener('click', async () => {
     const pwd = els.password.value.trim() || 'public';
     let data, type = 'text', filename = '';
 
     if (els.fileInput.files[0]) {
       const file = els.fileInput.files[0];
-      if (file.size > 5 * 1024 * 1024) return showToast('❌ Файл слишком большой (макс. 5 МБ)', 'error');
-      filename = file.name;
-      try {        data = await encryptData(await file.arrayBuffer(), pwd);
+      try {
+        const buffer = await file.arrayBuffer();
+        data = await encryptData(buffer, pwd);
         type = 'file';
+        filename = file.name;
       } catch (e) {
         return showToast('❌ Ошибка чтения файла', 'error');
       }
@@ -252,25 +286,28 @@
       try {
         data = await encryptData(els.textInput.value.trim(), pwd);
       } catch (e) {
-        return showToast('❌ Ошибка шифрования текста', 'error');
+        return showToast('❌ Ошибка шифрования', 'error');
       }
     } else {
       return showToast('⚠️ Выберите файл или введите текст', 'error');
     }
 
-    els.generateBtn.disabled = true;
-    els.generateBtn.textContent = '⏳ Шифрование...';
+    els.generateBtn.disabled = true;    els.generateBtn.textContent = '⏳ Шифрование...';
     
     try {
       const payload = JSON.stringify({ d: data, t: type, p: pwd !== 'public', f: filename });
-      const link = window.location.origin + window.location.pathname + '#' + btoa(unescape(encodeURIComponent(payload)));
+      const link = `${window.location.origin}${window.location.pathname}#${btoa(unescape(encodeURIComponent(payload)))}`;
       
       els.shortLink.textContent = link;
       els.result.classList.add('show');
       els.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
       showToast('✅ Ссылка создана!', 'success');
     } catch (e) {
-      showToast('❌ Не удалось создать ссылку', 'error');
+      if (e.name === 'RangeError' || e.message.includes('URL')) {
+        showToast('❌ Файл слишком большой для ссылки. Браузеры ограничивают длину URL (~2-4 МБ)', 'error');
+      } else {
+        showToast('❌ Не удалось создать ссылку', 'error');
+      }
     } finally {
       els.generateBtn.disabled = false;
       els.generateBtn.textContent = '✨ Создать ссылку';
@@ -282,17 +319,18 @@
     navigator.clipboard.writeText(els.shortLink.textContent).then(() => {
       els.copyBtn.textContent = '✓ Готово';
       setTimeout(() => els.copyBtn.textContent = '📋 Копировать', 1200);
-      showToast('✅ Ссылка скопирована', 'success');
+      showToast('✅ Скопировано', 'success');
     });
   });
 
   // ========== АНИМАЦИЯ ЗАГРУЗКИ ==========
-  function runLoadingAnimation(callback) {
+  function runLoading(callback) {
     els.overlay.classList.add('active');
     let sec = 3;
     els.timer.textContent = sec;
     const msgs = ['Проверка целостности...', 'Верификация источника...', 'Подготовка...'];
-        const tick = setInterval(() => {
+    
+    const tick = setInterval(() => {
       sec--;
       els.timer.textContent = sec;
       els.status.textContent = msgs[3 - sec - 1] || '';
@@ -301,79 +339,92 @@
         setTimeout(() => {
           els.overlay.classList.remove('active');
           callback();
-        }, 250);
+        }, 200);
       }
-    }, 1000);
-  }
+    }, 1000);  }
 
-  // ========== ПОСЛЕ АНИМАЦИИ ==========
-  function afterAnimation(decoded) {
+  // ========== ЛОГИКА ПОСЛЕ АНИМАЦИИ ==========
+  function handlePayload(payload) {
     els.content.textContent = '';
     els.downloadBtn.classList.add('hidden');
+    els.passwordGroup.classList.add('hidden');
+    els.decryptBtn.classList.add('hidden');
 
-    if (!decoded.p) {
-      // БЕЗ ПАРОЛЯ
-      els.viewerSubtitle.textContent = decoded.t === 'file' ? '📄 Файл готов' : '📝 Текст расшифрован';
-      processContent(decoded.d, decoded.t, decoded.f, 'public');
+    if (!payload.p) {
+      // БЕЗ ПАРОЛЯ: поля скрыты, контент грузится сразу
+      els.viewerSubtitle.textContent = payload.t === 'file' ? '📄 Файл готов к скачиванию' : '📝 Текст расшифрован';
+      decryptAndShow(payload.d, payload.t, payload.f, 'public');
     } else {
-      // С ПАРОЛЕМ
-      els.passwordGroup.classList.remove('hidden');
-      els.decryptBtn.classList.remove('hidden');
+      // С ПАРОЛЕМ: показываем поля
       els.viewerSubtitle.textContent = '🔒 Введите пароль для доступа';
       els.content.textContent = '🔐 Ожидание ввода пароля...';
+      els.passwordGroup.classList.remove('hidden');
+      els.passwordGroup.classList.add('fade-in');
+      els.decryptBtn.classList.remove('hidden');
+      els.decryptBtn.classList.add('fade-in');
       
-      // Вешаем обработчик только один раз
-      els.decryptBtn.replaceWith(els.decryptBtn.cloneNode(true));
-      const newBtn = document.getElementById('decryptBtn');
-      newBtn.addEventListener('click', () => {
-        const pwd = els.viewPassword.value.trim();
-        if (!pwd) return showToast('⚠️ Введите пароль', 'error');
-        newBtn.disabled = true; newBtn.textContent = '⏳ Проверка...';
-        processContent(decoded.d, decoded.t, decoded.f, pwd)
-          .then(() => {
-            els.passwordGroup.classList.add('hidden');
-            newBtn.classList.add('hidden');
-            els.viewerSubtitle.textContent = decoded.t === 'file' ? '📄 Файл расшифрован' : '📝 Текст расшифрован';
-          })
-          .catch(() => {
-            newBtn.disabled = false; newBtn.textContent = '🔍 Расшифровать';
-          });
-      });
+      // Привязка события (защита от дублирования)
+      els.decryptBtn.onclick = null;
+      els.decryptBtn.addEventListener('click', handleDecryptClick, { once: true });
     }
   }
-  // ========== ОБРАБОТКА КОНТЕНТА ==========
-  async function processContent(encodedData, type, filename, password) {
+
+  function handleDecryptClick() {
+    const pwd = els.viewPassword.value.trim();
+    if (!pwd) return showToast('⚠️ Введите пароль', 'error');
+    
+    els.decryptBtn.disabled = true;
+    els.decryptBtn.textContent = '⏳ Проверка...';
+    els.content.textContent = '🔄 Расшифровка...';
+    
+    decryptAndShow(decodedPayload.d, decodedPayload.t, decodedPayload.f, pwd)
+      .then(() => {
+        els.passwordGroup.classList.add('hidden');
+        els.decryptBtn.classList.add('hidden');
+        els.viewerSubtitle.textContent = decodedPayload.t === 'file' ? '📄 Файл расшифрован' : '📝 Текст расшифрован';
+      })
+      .catch(() => {
+        els.content.textContent = '❌ Неверный пароль';
+        els.content.classList.add('error');
+        els.decryptBtn.disabled = false;
+        els.decryptBtn.textContent = '🔍 Расшифровать';
+      });
+  }
+  // ========== РАСШИФРОВКА И ПОКАЗ ==========
+  async function decryptAndShow(encoded, type, filename, password) {
     try {
-      const decrypted = await decryptData(encodedData, password);
-      decryptedFileData = decrypted; // Сохраняем для кнопки скачивания
+      const decrypted = await decryptData(encoded, password);
+      els.content.classList.remove('error');
 
       if (type === 'text') {
         els.content.textContent = new TextDecoder().decode(decrypted);
         els.content.classList.add('text');
         els.downloadBtn.classList.add('hidden');
       } else {
+        decryptedBlob = new Blob([decrypted]);
         els.content.textContent = `📄 ${filename || 'Файл'} готов к скачиванию`;
         els.downloadBtn.classList.remove('hidden');
         els.downloadBtn.onclick = downloadFile;
       }
       showToast('✅ Успешно расшифровано', 'success');
     } catch (e) {
-      if (password !== 'public') {
-        els.content.textContent = '❌ Неверный пароль или данные повреждены';
-        showToast('❌ Ошибка доступа', 'error');
-      }
+      els.content.textContent = '❌ Ошибка расшифровки';
+      els.content.classList.add('error');
+      showToast('❌ Данные повреждены или неверный пароль', 'error');
       throw e;
     }
   }
 
-  // ========== СКАЧИВАНИЕ ФАЙЛА ==========
+  // ========== СКАЧИВАНИЕ ==========
   function downloadFile() {
-    if (!decryptedFileData) return;
-    const blob = new Blob([decryptedFileData]);
-    const url = URL.createObjectURL(blob);
+    if (!decryptedBlob) return;
+    const url = URL.createObjectURL(decryptedBlob);
     const a = document.createElement('a');
-    a.href = url; a.download = document.title || 'downloaded_file';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    a.href = url;
+    a.download = decodedPayload?.f || 'downloaded_file';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('⬇️ Скачивание началось', 'success');
   }
@@ -388,9 +439,10 @@
   function showError(msg) {
     els.viewer.classList.remove('hidden');
     els.sender.classList.add('hidden');
-    els.content.textContent = msg;
+    els.content.textContent = msg;    els.content.classList.add('error');
     showToast(msg, 'error');
   }
+
   // Enter в полях
   document.getElementById('password')?.addEventListener('keypress', e => e.key === 'Enter' && els.generateBtn.click());
   document.getElementById('viewPassword')?.addEventListener('keypress', e => e.key === 'Enter' && document.getElementById('decryptBtn')?.click());
