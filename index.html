@@ -3,74 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>✨ SecureShare — приватный обмен</title>
+  <title>🔐 SecureShare — приватный обмен</title>
   <style>
     :root {
-      --bg: #0a0e17; --card: rgba(23, 31, 50, 0.9); --accent: #22d3ee;
-      --accent-glow: rgba(34, 211, 238, 0.4); --text: #f1f5f9; --text-dim: #94a3b8;
-      --border: rgba(148, 163, 184, 0.25); --success: #22c55e; --error: #ef4444;
-      --radius: 1.25rem; --shadow: 0 20px 60px -15px rgba(0,0,0,0.5);
+      --bg: #0a0e17; --card: rgba(23, 31, 50, 0.92); --accent: #22d3ee;
+      --accent-glow: rgba(34, 211, 238, 0.35); --text: #f1f5f9; --text-dim: #94a3b8;
+      --border: rgba(148, 163, 184, 0.2); --success: #22c55e; --error: #ef4444;
+      --radius: 1.25rem; --shadow: 0 16px 50px -12px rgba(0,0,0,0.6);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body {
-      background: radial-gradient(ellipse at top, rgba(34,211,238,0.12), transparent 50%), var(--bg);
+      background: radial-gradient(ellipse at top, rgba(34,211,238,0.1), transparent 50%), var(--bg);
       color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem;
     }
     .card {
       background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1.8rem; max-width: 520px; width: 100%;
-      box-shadow: var(--shadow); animation: slideIn 0.4s ease;
+      border-radius: var(--radius); padding: 1.8rem; max-width: 540px; width: 100%;
+      box-shadow: var(--shadow); animation: slideIn 0.4s ease; position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), #8b5cf6, var(--accent)); opacity: 0.7;
     }
     @keyframes slideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
     
     h1 {
-      font-size: 1.8rem; margin-bottom: 0.3rem;
+      font-size: 1.7rem; margin-bottom: 0.3rem;
       background: linear-gradient(135deg, #e0e7ff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .subtitle { color: var(--text-dim); margin-bottom: 1.5rem; font-size: 0.95rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+    .subtitle { color: var(--text-dim); margin-bottom: 1.4rem; font-size: 0.95rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
     
-    .input-group { margin-bottom: 1.2rem; }
-    label { display: block; margin-bottom: 0.45rem; font-size: 0.9rem; color: var(--text-dim); font-weight: 500; }
+    .input-group { margin-bottom: 1.1rem; }
+    label { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; color: var(--text-dim); font-weight: 500; }
     input[type="file"], input[type="text"], input[type="password"], textarea {
       width: 100%; padding: 0.85rem 1rem; border-radius: 0.875rem; border: 1px solid var(--border);
-      background: rgba(30, 41, 59, 0.7); color: var(--text); font-size: 1rem; outline: none; transition: 0.2s;
+      background: rgba(30, 41, 59, 0.6); color: var(--text); font-size: 1rem; outline: none; transition: 0.2s;
     }
-    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,0.2); }
+    input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,0.15); }
     textarea { min-height: 100px; resize: vertical; }
     
     .btn {
-      width: 100%; padding: 0.95rem; background: linear-gradient(100deg, var(--accent), #06b6d4);
-      border: none; border-radius: 1rem; color: #0a0e17; font-weight: 600; font-size: 1rem;
+      width: 100%; padding: 0.9rem; background: linear-gradient(100deg, var(--accent), #06b6d4);
+      border: none; border-radius: 0.875rem; color: #0a0e17; font-weight: 600; font-size: 1rem;
       cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
     }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--accent-glow); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn.secondary { background: rgba(56,70,96,0.8); color: var(--text); border: 1px solid var(--border); }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 24px -8px var(--accent-glow); }    .btn:disabled { opacity: 0.6; cursor: wait; }
     .btn.success { background: linear-gradient(100deg, var(--success), #16a34a); }
-        /* Результат — теперь ОЧЕНЬ заметный */
+    .btn.success:hover:not(:disabled) { box-shadow: 0 10px 24px -8px rgba(34,197,94,0.4); }
+    
     .result {
-      margin-top: 1.4rem; padding: 1.2rem; background: rgba(30, 41, 59, 0.8);
+      margin-top: 1.3rem; padding: 1.1rem; background: rgba(30, 41, 59, 0.8);
       border-radius: 0.875rem; border: 2px solid var(--accent); display: none; animation: popIn 0.3s ease;
     }
     .result.show { display: block; }
     @keyframes popIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-    
     .result-label { font-size: 0.9rem; color: var(--accent); margin-bottom: 0.7rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem; }
-    .link-wrapper {
-      display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap;
-    }
+    .link-wrapper { display: flex; gap: 0.6rem; align-items: stretch; flex-wrap: wrap; }
     .link {
-      flex: 1; min-width: 200px; padding: 0.8rem 1rem; background: #0f172a; border-radius: 0.625rem;
-      font-family: monospace; font-size: 0.9rem; word-break: break-all; color: var(--accent);
+      flex: 1; min-width: 180px; padding: 0.75rem 0.9rem; background: #0f172a; border-radius: 0.625rem;
+      font-family: 'SF Mono', monospace; font-size: 0.88rem; word-break: break-all; color: var(--accent);
       border: 1px solid var(--border); display: flex; align-items: center;
     }
     .copy-btn {
-      padding: 0 1.2rem; background: var(--accent); border: none; border-radius: 0.625rem;
+      padding: 0 1.1rem; background: var(--accent); border: none; border-radius: 0.625rem;
       color: #0a0e17; font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap;
     }
     .copy-btn:hover { background: #67e8f9; }
     
-    /* Оверлей загрузки */
     .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(10,14,23,0.98); backdrop-filter: blur(12px);
@@ -79,105 +78,95 @@
     }
     .overlay.active { opacity: 1; visibility: visible; }
     .spinner {
-      width: 64px; height: 64px; border: 4px solid rgba(34,211,238,0.2);
-      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1.3rem;
+      width: 60px; height: 60px; border: 4px solid rgba(34,211,238,0.2);
+      border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1.2rem;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .timer { font-size: 2.8rem; font-weight: 800; font-family: monospace; color: var(--accent); margin: 0.2rem 0 0.6rem; }
-    .status { color: var(--text-dim); font-size: 1rem; text-align: center; }
+    .timer { font-size: 2.6rem; font-weight: 800; font-family: monospace; color: var(--accent); margin: 0.2rem 0 0.6rem; }
+    .status { color: var(--text-dim); font-size: 0.95rem; text-align: center; }
     
-    /* Viewer */
-    #viewer { display: none; }
-    #viewer.show { display: block; animation: slideIn 0.4s ease; }
     .content-box {
-      margin: 1.3rem 0; padding: 1.2rem; background: rgba(30,41,59,0.7);
-      border-radius: 0.875rem; border: 1px solid var(--border); min-height: 100px;
+      margin: 1.2rem 0; padding: 1.1rem; background: rgba(30,41,59,0.7);
+      border-radius: 0.875rem; border: 1px solid var(--border); min-height: 90px;
       display: flex; align-items: center; justify-content: center; text-align: center;
-      white-space: pre-wrap; word-break: break-word; line-height: 1.5;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.5; font-size: 1.02rem;
     }
     .content-box.text { justify-content: flex-start; text-align: left; }
-        /* Toast */
+    
     .toast {
       position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
       background: var(--card); border: 1px solid var(--border); padding: 0.8rem 1.4rem;
-      border-radius: 2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem;
-      box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: 0.25s; z-index: 2000;
+      border-radius: 2rem; color: var(--text); display: flex; align-items: center; gap: 0.5rem;      box-shadow: var(--shadow); opacity: 0; visibility: hidden; transition: 0.25s; z-index: 2000;
     }
     .toast.show { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     .toast.success { border-color: var(--success); }
     .toast.error { border-color: var(--error); }
     
+    .hidden { display: none !important; }
     @media (max-width: 500px) {
       .card { padding: 1.4rem; }
       .link-wrapper { flex-direction: column; }
       .copy-btn { width: 100%; padding: 0.8rem; }
-      .timer { font-size: 2.3rem; }
     }
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<!-- Страница отправителя -->
+<!-- СЕНДЕР -->
 <div class="card" id="sender">
   <h1>✨ SecureShare</h1>
   <p class="subtitle">Зашифруйте файл или текст в ссылку. Всё в браузере — без серверов.</p>
-  
   <div class="input-group">
-    <label>📁 Файл</label>
+    <label>📁 Файл (до 5 МБ)</label>
     <input type="file" id="fileInput" />
   </div>
-  
   <div class="input-group">
     <label>✏️ Или текст</label>
-    <textarea id="textInput" placeholder="Ваш секрет..."></textarea>
+    <textarea id="textInput" placeholder="Ваше сообщение..."></textarea>
   </div>
-  
   <div class="input-group">
-    <label>🔐 Пароль (необязательно)</label>
+    <label>🔐 Пароль (опционально)</label>
     <input type="password" id="password" placeholder="Оставьте пустым для публичной ссылки" />
   </div>
-  
   <button class="btn" id="generateBtn">✨ Создать ссылку</button>
-  
-  <!-- Результат: теперь с яркой рамкой и крупной кнопкой -->
   <div class="result" id="result">
     <div class="result-label">🔗 Готово! Скопируйте ссылку:</div>
     <div class="link-wrapper">
       <div class="link" id="shortLink"></div>
-      <button class="copy-btn" id="copyBtn">📋 Копировать</button>    </div>
+      <button class="copy-btn" id="copyBtn">📋 Копировать</button>
+    </div>
   </div>
 </div>
 
-<!-- Страница получателя -->
-<div class="card" id="viewer">
+<!-- ВИУЕР -->
+<div class="card hidden" id="viewer">
   <h1>🔓 Расшифровка</h1>
-  <p class="subtitle" id="viewerSubtitle">Введите пароль</p>
-  <div class="input-group" id="passwordGroup">
-    <input type="password" id="viewPassword" placeholder="Пароль" />
-  </div>
-  <button class="btn" id="decryptBtn">🔍 Расшифровать</button>
-  <div class="content-box" id="content">Ожидание...</div>
+  <p class="subtitle" id="viewerSubtitle">Проверка данных...</p>
+  <!-- Скрыто по умолчанию. Появится только если нужен пароль -->
+  <div class="input-group hidden" id="passwordGroup">
+    <input type="password" id="viewPassword" placeholder="Введите пароль" />
+  </div>  <button class="btn hidden" id="decryptBtn">🔍 Расшифровать</button>
+  <div class="content-box" id="content">⏳ Ожидание...</div>
   <button class="btn success hidden" id="downloadBtn">⬇️ Скачать файл</button>
 </div>
 
-<!-- Оверлей загрузки -->
+<!-- ОВЕРЛЕЙ -->
 <div class="overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="timer" id="timerDisplay">3</div>
   <div class="status" id="statusText">Проверка безопасности...</div>
 </div>
 
-<!-- Toast -->
+<!-- ТОСТ -->
 <div class="toast" id="toast"><span id="toastMsg">✓ Готово</span></div>
 
 <script>
-  // ===== Простое и надёжное шифрование =====
+  // ========== КРИПТОГРАФИЯ ==========
   async function deriveKey(password, salt) {
     const enc = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
     return crypto.subtle.deriveKey(
-      { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+      { name: 'PBKDF2', salt, iterations: 120000, hash: 'SHA-256' },
       keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
     );
   }
@@ -188,12 +177,11 @@
     const key = await deriveKey(password, salt);
     const enc = new TextEncoder();
     const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, typeof data === 'string' ? enc.encode(data) : data);
-    
-    // Надёжное кодирование в base64
-    const bytes = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-    bytes.set(salt, 0); bytes.set(iv, salt.length); bytes.set(new Uint8Array(encrypted), salt.length + iv.length);
-    return btoa(String.fromCharCode(...bytes));
+    const combined = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+    combined.set(salt, 0); combined.set(iv, salt.length); combined.set(new Uint8Array(encrypted), salt.length + iv.length);
+    return btoa(String.fromCharCode(...combined));
   }
+
   async function decryptData(encoded, password) {
     const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
     const salt = bytes.slice(0, 16), iv = bytes.slice(16, 28), data = bytes.slice(28);
@@ -201,262 +189,211 @@
     return await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
   }
 
-  // ===== UI элементы =====
-  const sender = document.getElementById('sender');
-  const viewer = document.getElementById('viewer');
-  const fileInput = document.getElementById('fileInput');
-  const textInput = document.getElementById('textInput');
-  const password = document.getElementById('password');
-  const generateBtn = document.getElementById('generateBtn');
-  const result = document.getElementById('result');
-  const shortLink = document.getElementById('shortLink');
-  const copyBtn = document.getElementById('copyBtn');
-  const viewPassword = document.getElementById('viewPassword');
-  const passwordGroup = document.getElementById('passwordGroup');
-  const viewerSubtitle = document.getElementById('viewerSubtitle');
-  const decryptBtn = document.getElementById('decryptBtn');
-  const content = document.getElementById('content');
-  const downloadBtn = document.getElementById('downloadBtn');
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  const timerDisplay = document.getElementById('timerDisplay');
-  const statusText = document.getElementById('statusText');
-  const toast = document.getElementById('toast');
-  const toastMsg = document.getElementById('toastMsg');
+  // ========== UI ЭЛЕМЕНТЫ ==========
+  const els = {
+    sender: document.getElementById('sender'),
+    viewer: document.getElementById('viewer'),
+    fileInput: document.getElementById('fileInput'),
+    textInput: document.getElementById('textInput'),    password: document.getElementById('password'),
+    generateBtn: document.getElementById('generateBtn'),
+    result: document.getElementById('result'),
+    shortLink: document.getElementById('shortLink'),
+    copyBtn: document.getElementById('copyBtn'),
+    viewerSubtitle: document.getElementById('viewerSubtitle'),
+    passwordGroup: document.getElementById('passwordGroup'),
+    viewPassword: document.getElementById('viewPassword'),
+    decryptBtn: document.getElementById('decryptBtn'),
+    content: document.getElementById('content'),
+    downloadBtn: document.getElementById('downloadBtn'),
+    overlay: document.getElementById('loadingOverlay'),
+    timer: document.getElementById('timerDisplay'),
+    status: document.getElementById('statusText'),
+    toast: document.getElementById('toast'),
+    toastMsg: document.getElementById('toastMsg')
+  };
 
-  // ===== Проверка хэша =====
-  if (window.location.hash.length > 1) {
-    sender.style.display = 'none';
-    viewer.classList.add('show');
-    document.title = '🔓 SecureShare';
-    
-    try {
-      const hash = window.location.hash.substring(1);
-      const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
-      
-      if (!decoded.p) {
-        // Нет пароля — сразу запускаем анимацию
-        setTimeout(() => startLoading(decoded), 200);
+  let decryptedFileData = null;
+
+  // ========== ИНИЦИАЛИЗАЦИЯ ==========
+  document.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      try {
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(hash))));
+        if (!decoded.d || !decoded.t) throw new Error('Invalid payload');
+        
+        els.sender.classList.add('hidden');
+        els.viewer.classList.remove('hidden');
+        els.viewerSubtitle.textContent = decoded.p ? '🔒 Ссылка защищена паролем' : '🔓 Открываем защищённые данные...';
+        
+        // Всегда запускаем 3-сек анимацию
+        runLoadingAnimation(() => afterAnimation(decoded));
+      } catch (e) {
+        showError('⚠️ Ссылка повреждена или недействительна');
       }
-    } catch(e) {
-      showError('Ссылка повреждена');
     }
-  }
+  });
 
-  // ===== Генерация ссылки =====
-  generateBtn.addEventListener('click', async () => {    const pwd = (password.value.trim() || 'public');
+  // ========== ГЕНЕРАЦИЯ ССЫЛКИ ==========
+  els.generateBtn.addEventListener('click', async () => {
+    const pwd = els.password.value.trim() || 'public';
     let data, type = 'text', filename = '';
-    
-    // Валидация
-    if (fileInput.files[0]) {
-      const file = fileInput.files[0];
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Файл слишком большой (макс. 5 МБ)', 'error');
-        return;
-      }
+
+    if (els.fileInput.files[0]) {
+      const file = els.fileInput.files[0];
+      if (file.size > 5 * 1024 * 1024) return showToast('❌ Файл слишком большой (макс. 5 МБ)', 'error');
       filename = file.name;
-      try {
-        const buffer = await file.arrayBuffer();
-        data = await encryptData(buffer, pwd);
+      try {        data = await encryptData(await file.arrayBuffer(), pwd);
         type = 'file';
-      } catch(e) {
-        showToast('Ошибка чтения файла', 'error');
-        console.error(e);
-        return;
+      } catch (e) {
+        return showToast('❌ Ошибка чтения файла', 'error');
       }
-    } else if (textInput.value.trim()) {
+    } else if (els.textInput.value.trim()) {
       try {
-        data = await encryptData(textInput.value.trim(), pwd);
-      } catch(e) {
-        showToast('Ошибка шифрования', 'error');
-        console.error(e);
-        return;
+        data = await encryptData(els.textInput.value.trim(), pwd);
+      } catch (e) {
+        return showToast('❌ Ошибка шифрования текста', 'error');
       }
     } else {
-      showToast('Выберите файл или введите текст', 'error');
-      return;
+      return showToast('⚠️ Выберите файл или введите текст', 'error');
     }
-    
-    // Блокируем кнопку и показываем загрузку
-    generateBtn.disabled = true;
-    generateBtn.innerHTML = '⏳ Шифрование...';
+
+    els.generateBtn.disabled = true;
+    els.generateBtn.textContent = '⏳ Шифрование...';
     
     try {
       const payload = JSON.stringify({ d: data, t: type, p: pwd !== 'public', f: filename });
-      const encoded = btoa(unescape(encodeURIComponent(payload)));
-      const link = window.location.origin + window.location.pathname + '#' + encoded;
+      const link = window.location.origin + window.location.pathname + '#' + btoa(unescape(encodeURIComponent(payload)));
       
-      // Показываем результат
-      shortLink.textContent = link;
-      result.classList.add('show');
-      result.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      showToast('Ссылка создана!', 'success');
-      
-    } catch(e) {
-      console.error('Generate error:', e);      showToast('Не удалось создать ссылку', 'error');
+      els.shortLink.textContent = link;
+      els.result.classList.add('show');
+      els.result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      showToast('✅ Ссылка создана!', 'success');
+    } catch (e) {
+      showToast('❌ Не удалось создать ссылку', 'error');
     } finally {
-      generateBtn.disabled = false;
-      generateBtn.innerHTML = '✨ Создать ссылку';
+      els.generateBtn.disabled = false;
+      els.generateBtn.textContent = '✨ Создать ссылку';
     }
   });
 
-  // ===== Копирование =====
-  copyBtn.addEventListener('click', () => {
-    const text = shortLink.textContent;
-    if (!text) return;
-    
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('✓ Скопировано!', 'success');
-      // Визуальный фидбек на кнопке
-      const original = copyBtn.textContent;
-      copyBtn.textContent = '✓';
-      setTimeout(() => copyBtn.textContent = original, 1200);
-    }).catch(() => {
-      // Фолбэк для старых браузеров
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      showToast('✓ Скопировано!', 'success');
+  // ========== КОПИРОВАНИЕ ==========
+  els.copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(els.shortLink.textContent).then(() => {
+      els.copyBtn.textContent = '✓ Готово';
+      setTimeout(() => els.copyBtn.textContent = '📋 Копировать', 1200);
+      showToast('✅ Ссылка скопирована', 'success');
     });
   });
 
-  // ===== Анимация загрузки (3 сек) =====
-  function startLoading(decoded) {
-    loadingOverlay.classList.add('active');
-    let time = 3;
-    timerDisplay.textContent = time;
-    
-    const statuses = [
-      'Проверка целостности...',
-      'Верификация источника...',
-      'Подготовка к расшифровке...'
-    ];
-    
-    const interval = setInterval(() => {
-      time--;
-      timerDisplay.textContent = time;
-      if (time > 0) statusText.textContent = statuses[3 - time];
+  // ========== АНИМАЦИЯ ЗАГРУЗКИ ==========
+  function runLoadingAnimation(callback) {
+    els.overlay.classList.add('active');
+    let sec = 3;
+    els.timer.textContent = sec;
+    const msgs = ['Проверка целостности...', 'Верификация источника...', 'Подготовка...'];
+        const tick = setInterval(() => {
+      sec--;
+      els.timer.textContent = sec;
+      els.status.textContent = msgs[3 - sec - 1] || '';
+      if (sec <= 0) {
+        clearInterval(tick);
+        setTimeout(() => {
+          els.overlay.classList.remove('active');
+          callback();
+        }, 250);
+      }
     }, 1000);
-    
-    setTimeout(() => {
-      clearInterval(interval);      loadingOverlay.classList.remove('active');
-      showContent(decoded);
-    }, 3100);
   }
 
-  // ===== Показ контента =====
-  async function showContent(decoded) {
-    content.textContent = '';
-    
-    if (decoded.t === 'text') {
-      if (decoded.p) {
-        // Нужен пароль
-        viewerSubtitle.textContent = 'Введите пароль';
-        passwordGroup.classList.remove('hidden');
-        decryptBtn.classList.remove('hidden');
-        content.textContent = '🔐 Введите пароль выше для просмотра';
-        
-        decryptBtn.onclick = () => tryDecrypt(decoded.d, viewPassword.value, null, false);
-      } else {
-        // Без пароля
-        try {
-          const decrypted = await decryptData(decoded.d, 'public');
-          content.textContent = new TextDecoder().decode(decrypted);
-          content.classList.add('text');
-          downloadBtn.classList.add('hidden');
-          showToast('Контент расшифрован!', 'success');
-        } catch(e) {
-          content.textContent = '❌ Ошибка расшифровки';
-          showToast('Неверные данные', 'error');
-        }
-      }
+  // ========== ПОСЛЕ АНИМАЦИИ ==========
+  function afterAnimation(decoded) {
+    els.content.textContent = '';
+    els.downloadBtn.classList.add('hidden');
+
+    if (!decoded.p) {
+      // БЕЗ ПАРОЛЯ
+      els.viewerSubtitle.textContent = decoded.t === 'file' ? '📄 Файл готов' : '📝 Текст расшифрован';
+      processContent(decoded.d, decoded.t, decoded.f, 'public');
     } else {
-      // Файл
-      const fname = decoded.f || 'файл';
-      if (decoded.p) {
-        viewerSubtitle.textContent = 'Пароль для скачивания';
-        passwordGroup.classList.remove('hidden');
-        decryptBtn.classList.remove('hidden');
-        content.textContent = `🔐 Введите пароль для ${fname}`;
-        decryptBtn.onclick = () => tryDecrypt(decoded.d, viewPassword.value, decoded.f, true);
+      // С ПАРОЛЕМ
+      els.passwordGroup.classList.remove('hidden');
+      els.decryptBtn.classList.remove('hidden');
+      els.viewerSubtitle.textContent = '🔒 Введите пароль для доступа';
+      els.content.textContent = '🔐 Ожидание ввода пароля...';
+      
+      // Вешаем обработчик только один раз
+      els.decryptBtn.replaceWith(els.decryptBtn.cloneNode(true));
+      const newBtn = document.getElementById('decryptBtn');
+      newBtn.addEventListener('click', () => {
+        const pwd = els.viewPassword.value.trim();
+        if (!pwd) return showToast('⚠️ Введите пароль', 'error');
+        newBtn.disabled = true; newBtn.textContent = '⏳ Проверка...';
+        processContent(decoded.d, decoded.t, decoded.f, pwd)
+          .then(() => {
+            els.passwordGroup.classList.add('hidden');
+            newBtn.classList.add('hidden');
+            els.viewerSubtitle.textContent = decoded.t === 'file' ? '📄 Файл расшифрован' : '📝 Текст расшифрован';
+          })
+          .catch(() => {
+            newBtn.disabled = false; newBtn.textContent = '🔍 Расшифровать';
+          });
+      });
+    }
+  }
+  // ========== ОБРАБОТКА КОНТЕНТА ==========
+  async function processContent(encodedData, type, filename, password) {
+    try {
+      const decrypted = await decryptData(encodedData, password);
+      decryptedFileData = decrypted; // Сохраняем для кнопки скачивания
+
+      if (type === 'text') {
+        els.content.textContent = new TextDecoder().decode(decrypted);
+        els.content.classList.add('text');
+        els.downloadBtn.classList.add('hidden');
       } else {
-        try {
-          const decrypted = await decryptData(decoded.d, 'public');
-          content.textContent = `📄 ${fname} готов`;
-          downloadBtn.classList.remove('hidden');
-          downloadBtn.onclick = () => {
-            const blob = new Blob([decrypted]);
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = decoded.f || 'file';            document.body.appendChild(a); a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            showToast('Скачивание...', 'success');
-          };
-          showToast('Файл готов!', 'success');
-        } catch(e) {
-          content.textContent = '❌ Ошибка файла';
-          showToast('Не удалось расшифровать', 'error');
-        }
+        els.content.textContent = `📄 ${filename || 'Файл'} готов к скачиванию`;
+        els.downloadBtn.classList.remove('hidden');
+        els.downloadBtn.onclick = downloadFile;
       }
+      showToast('✅ Успешно расшифровано', 'success');
+    } catch (e) {
+      if (password !== 'public') {
+        els.content.textContent = '❌ Неверный пароль или данные повреждены';
+        showToast('❌ Ошибка доступа', 'error');
+      }
+      throw e;
     }
   }
 
-  // ===== Расшифровка с паролем =====
-  async function tryDecrypt(encoded, pwd, filename, isFile) {
-    decryptBtn.disabled = true;
-    decryptBtn.textContent = '⏳ Проверка...';
-    
-    try {
-      const decrypted = await decryptData(encoded, pwd);
-      
-      if (isFile) {
-        content.textContent = `📄 ${filename || 'Файл'} расшифрован`;
-        downloadBtn.classList.remove('hidden');
-        downloadBtn.onclick = () => {
-          const blob = new Blob([decrypted]);
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = filename || 'file';
-          document.body.appendChild(a); a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        };
-      } else {
-        content.textContent = new TextDecoder().decode(decrypted);
-        content.classList.add('text');
-        downloadBtn.classList.add('hidden');
-      }
-      
-      passwordGroup.classList.add('hidden');
-      decryptBtn.classList.add('hidden');
-      showToast('✓ Успешно!', 'success');
-      
-    } catch(e) {
-      content.textContent = '❌ Неверный пароль';
-      showToast('Пароль не подходит', 'error');
-    } finally {
-      decryptBtn.disabled = false;
-      decryptBtn.textContent = '🔍 Расшифровать';    }
+  // ========== СКАЧИВАНИЕ ФАЙЛА ==========
+  function downloadFile() {
+    if (!decryptedFileData) return;
+    const blob = new Blob([decryptedFileData]);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = document.title || 'downloaded_file';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('⬇️ Скачивание началось', 'success');
   }
 
-  // ===== Уведомления =====
+  // ========== УТИЛИТЫ ==========
   function showToast(msg, type = 'success') {
-    toastMsg.textContent = msg;
-    toast.className = `toast ${type} show`;
-    setTimeout(() => toast.classList.remove('show'), 2200);
+    els.toastMsg.textContent = msg;
+    els.toast.className = `toast ${type} show`;
+    setTimeout(() => els.toast.classList.remove('show'), 2500);
   }
-  
+
   function showError(msg) {
-    content.textContent = `❌ ${msg}`;
+    els.viewer.classList.remove('hidden');
+    els.sender.classList.add('hidden');
+    els.content.textContent = msg;
     showToast(msg, 'error');
   }
-
-  // ===== Enter в полях =====
-  viewPassword?.addEventListener('keypress', e => { if (e.key === 'Enter') decryptBtn.click(); });
-  password?.addEventListener('keypress', e => { if (e.key === 'Enter') generateBtn.click(); });
+  // Enter в полях
+  document.getElementById('password')?.addEventListener('keypress', e => e.key === 'Enter' && els.generateBtn.click());
+  document.getElementById('viewPassword')?.addEventListener('keypress', e => e.key === 'Enter' && document.getElementById('decryptBtn')?.click());
 </script>
 </body>
 </html>
